@@ -35,6 +35,7 @@
             background-image: linear-gradient(rgba(15, 108, 105, 0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(15, 108, 105, 0.045) 1px, transparent 1px);
             background-size: 28px 28px;
         }
+        body.dialog-open { position: fixed; width: 100%; overflow: hidden; }
 
         body[data-language="ja"] .lang-en,
         body[data-language="en"] .lang-ja { display: none !important; }
@@ -167,8 +168,9 @@
         .winner-name { margin: 0.75rem 0 0.55rem; font-size: clamp(1.45rem, 2.4vw, 2.3rem); font-weight: 800; }
         .score { color: var(--teal); font-size: 0.95rem; font-weight: 800; letter-spacing: 0.05em; }
 
-        .winner-image { min-height: 330px; background: #dfe9e5; }
-        .winner-image img, .gallery-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .winner-image { display: grid; min-height: 330px; background: #dfe9e5; place-items: center; }
+        .winner-image img { width: 100%; height: auto; object-fit: contain; display: block; }
+        .gallery-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .winner-image img, .gallery-image img { cursor: zoom-in; transition: transform 220ms ease; }
         .winner-image:hover img, .gallery-image:hover img { transform: scale(1.025); }
 
@@ -199,11 +201,11 @@
         .rank-tag { display: inline-block; margin-bottom: 0.55rem; padding: 0.3rem 0.5rem; border-radius: 4px; color: var(--teal); background: var(--mint); font-size: 0.82rem; font-weight: 800; letter-spacing: 0.07em; }
 
         .zoomable-image:focus-visible { outline: 3px solid var(--coral); outline-offset: -3px; }
-        .image-dialog { width: 100vw; height: 100vh; max-width: none; max-height: none; margin: 0; padding: 1.5rem; border: 0; background: rgba(10, 18, 31, 0.94); }
+        .image-dialog { box-sizing: border-box; width: 100vw; height: 100vh; max-width: none; max-height: none; margin: 0; padding: calc(5rem + env(safe-area-inset-top)) max(1.5rem, env(safe-area-inset-right)) max(1.5rem, env(safe-area-inset-bottom)) max(1.5rem, env(safe-area-inset-left)); overflow: hidden; border: 0; touch-action: none; background: rgba(10, 18, 31, 0.94); }
         .image-dialog::backdrop { background: rgba(10, 18, 31, 0.72); }
         .image-dialog[open] { display: grid; place-items: center; animation: dialog-fade-in 180ms ease-out; }
-        .image-dialog img { max-width: 100%; max-height: calc(100vh - 3rem); object-fit: contain; animation: image-zoom-in 220ms ease-out; }
-        .dialog-close { position: fixed; top: 1rem; right: 1rem; width: 3rem; height: 3rem; border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 50%; color: #fff; background: rgba(23, 36, 58, 0.75); font-size: 2rem; line-height: 1; }
+        .image-dialog img { width: 100%; height: 100%; min-width: 0; min-height: 0; max-width: 100%; max-height: 100%; object-fit: contain; animation: image-zoom-in 220ms ease-out; }
+        .dialog-close { position: fixed; z-index: 1; top: max(1rem, env(safe-area-inset-top)); right: max(1rem, env(safe-area-inset-right)); width: 3rem; height: 3rem; border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 50%; color: #fff; background: rgba(23, 36, 58, 0.75); font-size: 2rem; line-height: 1; }
         @keyframes dialog-fade-in { from { opacity: 0; } to { opacity: 1; } }
         @keyframes image-zoom-in { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
 
@@ -214,7 +216,7 @@
             .event-hero { padding: 3.5rem 0 3rem; }
             .winner-card, .winner-card:nth-of-type(2) { grid-template-columns: 1fr; }
             .winner-card:nth-of-type(2) .winner-image { order: initial; }
-            .winner-image { min-height: 0; aspect-ratio: 4 / 3; }
+            .winner-image { min-height: 0; }
             .ranking-row { grid-template-columns: repeat(var(--item-count), minmax(16rem, 1fr)); overflow-x: auto; padding: 0 0.25rem 0.75rem; }
         }
 
@@ -224,6 +226,9 @@
             .stat-box { border-top: 1px solid var(--line); border-left: 0; }
             .section-heading { align-items: start; flex-direction: column; margin-top: 3rem; }
             .winner-info { padding: 1.5rem; }
+            .winner-image { aspect-ratio: auto; }
+            .winner-image img { height: auto; object-fit: contain; }
+            .gallery-image { aspect-ratio: 1; }
             .points-list { grid-template-columns: repeat(5, minmax(3.5rem, 1fr)); overflow-x: auto; }
         }
 
@@ -244,7 +249,7 @@
         .event-title { font-size: clamp(2.5rem, 5vw, 3.5rem); line-height: 1.07; }
         .event-subtitle { color: #ccc; font-size: 1.1rem; line-height: 1.47; }
         .hero-number { color: #fff; font-family: 'SF Pro Display', system-ui, -apple-system, sans-serif; font-size: clamp(4rem, 10vw, 8rem); font-weight: 600; }
-        .summary-panel, .winner-card { border: 0; border-radius: 0; box-shadow: none; }
+        .summary-panel { border: 0; border-radius: 0; box-shadow: none; }
         .points-list li { border-color: var(--line); border-radius: 18px; background: #fff; }
         .points-list strong, .stat-value, .rank-number { color: var(--ink); font-family: 'SF Pro Display', system-ui, -apple-system, sans-serif; }
         .points-list span, .stat-label { color: var(--muted); font-size: 0.875rem; }
@@ -252,7 +257,7 @@
         .section-kicker { color: var(--muted); font-size: 0.875rem; font-weight: 600; letter-spacing: -0.01em; }
         .score { color: var(--muted); font-size: 1rem; font-weight: 400; letter-spacing: -0.01em; }
         .winner-image, .gallery-image { background: #f5f5f7; }
-        .gallery-card { border-color: var(--line); border-radius: 18px; box-shadow: none; }
+        .winner-card, .gallery-card { border-color: var(--line); border-radius: 18px; box-shadow: none; }
         .rank-tag { border-radius: 9999px; color: var(--ink); background: #f5f5f7; font-size: 0.82rem; font-weight: 600; letter-spacing: -0.01em; }
         .footer-note { padding: 4rem 2rem; border-radius: 0; color: var(--ink); background: #f5f5f7; line-height: 1.47; }
         .dialog-close { border: 0; color: var(--ink); background: rgba(210, 210, 215, 0.9); }
@@ -303,7 +308,32 @@
     <script>
         const imageDialog = document.querySelector('.image-dialog');
         const dialogImage = imageDialog.querySelector('img');
-        const closeDialog = () => imageDialog.close();
+        let pageScrollY = 0;
+        let isPageScrollLocked = false;
+
+        const lockPageScroll = () => {
+            if (isPageScrollLocked) return;
+            pageScrollY = window.scrollY;
+            isPageScrollLocked = true;
+            document.body.classList.add('dialog-open');
+            document.body.style.top = `-${pageScrollY}px`;
+        };
+
+        const unlockPageScroll = () => {
+            if (!isPageScrollLocked) return;
+            isPageScrollLocked = false;
+            const previousScrollBehavior = document.documentElement.style.scrollBehavior;
+            document.documentElement.style.scrollBehavior = 'auto';
+            document.body.classList.remove('dialog-open');
+            document.body.style.top = '';
+            window.scrollTo(0, pageScrollY);
+            document.documentElement.style.scrollBehavior = previousScrollBehavior;
+        };
+
+        const closeDialog = () => {
+            imageDialog.close();
+            unlockPageScroll();
+        };
 
         const localize = (ja, en) => `<span class="lang-ja">${ja}</span><span class="lang-en">${en}</span>`;
         const place = (rank) => localize(`${rank}位`, `${rank}${rank === 1 ? 'st' : rank === 2 ? 'nd' : rank === 3 ? 'rd' : 'th'} Place`);
@@ -318,6 +348,7 @@
                     dialogImage.src = image.currentSrc || image.src;
                     dialogImage.alt = image.alt;
                     imageDialog.showModal();
+                    lockPageScroll();
                 };
                 image.addEventListener('click', openDialog);
                 image.addEventListener('keydown', (event) => {
@@ -388,6 +419,7 @@
             });
 
         imageDialog.querySelector('.dialog-close').addEventListener('click', closeDialog);
+        imageDialog.addEventListener('close', unlockPageScroll);
         imageDialog.addEventListener('click', (event) => {
             if (event.target === imageDialog) closeDialog();
         });
