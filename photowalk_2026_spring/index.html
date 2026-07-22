@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhotoWalk Voting Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+
+        :root {
+            --ink: #17243a;
+            --muted: #5f6b79;
+            --paper: #f5f8f5;
+            --surface: #ffffff;
+            --line: #d8e2df;
+            --mint: #d9eee5;
+            --teal: #0f6c69;
+            --coral: #e8644b;
+            --gold: #d99a20;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        .container {
+            width: min(calc(100% - 3rem), 1140px);
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        body {
+            color: var(--ink);
+            font-family: 'Manrope', 'Noto Sans JP', sans-serif;
+            background-color: var(--paper);
+            background-image: linear-gradient(rgba(15, 108, 105, 0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(15, 108, 105, 0.045) 1px, transparent 1px);
+            background-size: 28px 28px;
+        }
+
+        body[data-language="ja"] .lang-en,
+        body[data-language="en"] .lang-ja { display: none !important; }
+
+        .site-header {
+            background: var(--ink);
+            color: #fff;
+        }
+
+        .site-nav {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+            font-size: 0.9rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+        }
+
+        .site-nav .container { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+        .language-switcher { display: inline-flex; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.35); border-radius: 5px; }
+        .language-button { min-width: 3.5rem; padding: 0.55rem 0.85rem; border: 0; color: rgba(255, 255, 255, 0.75); background: transparent; font: inherit; font-size: 0.86rem; font-weight: 800; letter-spacing: 0.06em; }
+        .language-button.active { color: var(--ink); background: #fff; }
+
+        .event-hero { padding: 5rem 0 4.5rem; }
+
+        .eyebrow {
+            color: #aee5d5;
+            font-size: 0.9rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .event-title {
+            max-width: 850px;
+            margin: 0.7rem 0 1rem;
+            font-family: 'DM Serif Display', 'Noto Sans JP', serif;
+            font-size: clamp(2.5rem, 5vw, 5rem);
+            line-height: 1.04;
+        }
+
+        .event-subtitle {
+            max-width: 680px;
+            color: rgba(255, 255, 255, 0.73);
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        .hero-number {
+            color: var(--coral);
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(5rem, 13vw, 10rem);
+            line-height: 0.78;
+        }
+
+        main { padding: 3.5rem 0 4rem; }
+
+        .summary-panel {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+            box-shadow: 0 12px 35px rgba(23, 36, 58, 0.08);
+        }
+
+        .summary-copy { line-height: 1.85; }
+
+        .points-list { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.45rem; margin: 1.5rem 0; padding: 0; list-style: none; }
+        .points-list li { padding: 0.65rem 0.35rem; border: 1px solid var(--line); border-radius: 5px; background: #f8fbf9; text-align: center; }
+        .points-list strong { display: block; color: var(--coral); font-family: 'DM Serif Display', serif; font-size: 1.45rem; line-height: 1; }
+        .points-list span { display: block; margin-top: 0.3rem; color: var(--muted); font-size: 0.82rem; font-weight: 800; }
+
+        .stat-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100%;
+            padding: 1.25rem;
+            border-left: 1px solid var(--line);
+            text-align: center;
+        }
+
+        .stat-value {
+            display: block;
+            color: var(--teal);
+            font-family: 'DM Serif Display', serif;
+            font-size: 2.4rem;
+            line-height: 1;
+        }
+
+        .stat-label { color: var(--muted); font-size: 0.9rem; font-weight: 800; letter-spacing: 0.06em; }
+
+        .section-heading {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 1rem;
+            margin: 4rem 0 1.5rem;
+        }
+
+        .section-heading h2 {
+            margin: 0;
+            font-family: 'DM Serif Display', 'Noto Sans JP', serif;
+            font-size: clamp(2rem, 4vw, 3.3rem);
+        }
+
+        .section-kicker { color: var(--teal); font-size: 0.9rem; font-weight: 800; letter-spacing: 0.1em; }
+
+        .winner-card {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(220px, 0.78fr);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+            box-shadow: 0 10px 24px rgba(23, 36, 58, 0.06);
+        }
+
+        .winner-card:nth-of-type(2) { grid-template-columns: minmax(220px, 0.78fr) minmax(0, 1fr); }
+        .winner-card:nth-of-type(2) .winner-image { order: -1; }
+
+        .winner-info { display: flex; flex-direction: column; justify-content: center; padding: clamp(1.6rem, 4vw, 4rem); }
+
+        .rank-number {
+            color: var(--coral);
+            font-family: 'DM Serif Display', serif;
+            font-size: 3.6rem;
+            line-height: 0.9;
+        }
+
+        .winner-name { margin: 0.75rem 0 0.55rem; font-size: clamp(1.45rem, 2.4vw, 2.3rem); font-weight: 800; }
+        .score { color: var(--teal); font-size: 0.95rem; font-weight: 800; letter-spacing: 0.05em; }
+
+        .winner-image { min-height: 330px; background: #dfe9e5; }
+        .winner-image img, .gallery-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .winner-image img, .gallery-image img { cursor: zoom-in; transition: transform 220ms ease; }
+        .winner-image:hover img, .gallery-image:hover img { transform: scale(1.025); }
+
+        .ranking-row {
+            display: grid;
+            grid-template-columns: repeat(var(--item-count), minmax(0, 1fr));
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .gallery-section { margin-bottom: 2.5rem; }
+        .gallery-section .section-heading { margin-top: 4rem; }
+
+        .fourth-row { --item-count: 4; }
+        .other-row { --item-count: 3; }
+
+        .ranking-row .col {
+            min-width: 0;
+            padding: 0;
+        }
+
+        .gallery-card { height: 100%; overflow: hidden; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); box-shadow: 0 8px 20px rgba(23, 36, 58, 0.05); }
+        .gallery-image { aspect-ratio: 4 / 3; background: var(--mint); }
+        .gallery-copy { padding: 1rem 1rem 1.15rem; }
+        .gallery-copy h3 { margin: 0; font-size: 1rem; font-weight: 800; line-height: 1.55; }
+        .gallery-copy small { display: block; margin-top: 0.25rem; color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+
+        .rank-tag { display: inline-block; margin-bottom: 0.55rem; padding: 0.3rem 0.5rem; border-radius: 4px; color: var(--teal); background: var(--mint); font-size: 0.82rem; font-weight: 800; letter-spacing: 0.07em; }
+
+        .zoomable-image:focus-visible { outline: 3px solid var(--coral); outline-offset: -3px; }
+        .image-dialog { width: 100vw; height: 100vh; max-width: none; max-height: none; margin: 0; padding: 1.5rem; border: 0; background: rgba(10, 18, 31, 0.94); }
+        .image-dialog::backdrop { background: rgba(10, 18, 31, 0.72); }
+        .image-dialog[open] { display: grid; place-items: center; animation: dialog-fade-in 180ms ease-out; }
+        .image-dialog img { max-width: 100%; max-height: calc(100vh - 3rem); object-fit: contain; animation: image-zoom-in 220ms ease-out; }
+        .dialog-close { position: fixed; top: 1rem; right: 1rem; width: 3rem; height: 3rem; border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 50%; color: #fff; background: rgba(23, 36, 58, 0.75); font-size: 2rem; line-height: 1; }
+        @keyframes dialog-fade-in { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes image-zoom-in { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+
+        .footer-note { margin-top: 4rem; padding: 2rem; border-radius: 8px; color: #fff; background: var(--teal); text-align: center; line-height: 1.8; }
+        .footer-note p { margin: 0; }
+
+        @media (max-width: 991.98px) {
+            .event-hero { padding: 3.5rem 0 3rem; }
+            .winner-card, .winner-card:nth-of-type(2) { grid-template-columns: 1fr; }
+            .winner-card:nth-of-type(2) .winner-image { order: initial; }
+            .winner-image { min-height: 0; aspect-ratio: 4 / 3; }
+            .ranking-row { grid-template-columns: repeat(var(--item-count), minmax(16rem, 1fr)); overflow-x: auto; padding: 0 0.25rem 0.75rem; }
+        }
+
+        @media (max-width: 575.98px) {
+            .container { width: min(calc(100% - 2rem), 1140px); }
+            main { padding-top: 2rem; }
+            .stat-box { border-top: 1px solid var(--line); border-left: 0; }
+            .section-heading { align-items: start; flex-direction: column; margin-top: 3rem; }
+            .winner-info { padding: 1.5rem; }
+            .points-list { grid-template-columns: repeat(5, minmax(3.5rem, 1fr)); overflow-x: auto; }
+        }
+
+        @media print { .site-header { color: var(--ink); background: #fff; } .winner-card, .gallery-card { break-inside: avoid; } }
+
+        /* Apple-design-analysis theme */
+        :root { --ink: #1d1d1f; --muted: #7a7a7a; --paper: #f5f5f7; --surface: #fff; --line: #e0e0e0; --mint: #f5f5f7; --teal: #0066cc; --coral: #0066cc; }
+        body { background: var(--paper); font-family: 'SF Pro Text', system-ui, -apple-system, BlinkMacSystemFont, 'Noto Sans JP', sans-serif; font-size: 17px; line-height: 1.47; }
+        .site-header { background: #000; }
+        .site-nav { font-size: 0.875rem; font-weight: 400; letter-spacing: -0.01em; }
+        .language-switcher { border-color: rgba(255, 255, 255, 0.45); border-radius: 8px; }
+        .language-switcher { display: flex; width: 7rem; }
+        .language-button { flex: 1; padding: 0.5rem 0; font-size: 0.875rem; font-weight: 400; letter-spacing: -0.01em; }
+        .language-button.active { color: #fff; background: #1d1d1f; }
+        .language-button:active, .btn:active { transform: scale(0.95); }
+        .eyebrow { color: #ccc; font-size: 0.875rem; font-weight: 600; letter-spacing: -0.01em; }
+        .event-title, .section-heading h2, .rank-number, .stat-value { font-family: 'SF Pro Display', system-ui, -apple-system, BlinkMacSystemFont, 'Noto Sans JP', sans-serif; font-weight: 600; letter-spacing: -0.02em; }
+        .event-title { font-size: clamp(2.5rem, 5vw, 3.5rem); line-height: 1.07; }
+        .event-subtitle { color: #ccc; font-size: 1.1rem; line-height: 1.47; }
+        .hero-number { color: #fff; font-family: 'SF Pro Display', system-ui, -apple-system, sans-serif; font-size: clamp(4rem, 10vw, 8rem); font-weight: 600; }
+        .summary-panel, .winner-card { border: 0; border-radius: 0; box-shadow: none; }
+        .points-list li { border-color: var(--line); border-radius: 18px; background: #fff; }
+        .points-list strong, .stat-value, .rank-number { color: var(--ink); font-family: 'SF Pro Display', system-ui, -apple-system, sans-serif; }
+        .points-list span, .stat-label { color: var(--muted); font-size: 0.875rem; }
+        .section-heading h2 { font-size: clamp(2rem, 4vw, 2.5rem); line-height: 1.1; }
+        .section-kicker { color: var(--muted); font-size: 0.875rem; font-weight: 600; letter-spacing: -0.01em; }
+        .score { color: var(--muted); font-size: 1rem; font-weight: 400; letter-spacing: -0.01em; }
+        .winner-image, .gallery-image { background: #f5f5f7; }
+        .gallery-card { border-color: var(--line); border-radius: 18px; box-shadow: none; }
+        .rank-tag { border-radius: 9999px; color: var(--ink); background: #f5f5f7; font-size: 0.82rem; font-weight: 600; letter-spacing: -0.01em; }
+        .footer-note { padding: 4rem 2rem; border-radius: 0; color: var(--ink); background: #f5f5f7; line-height: 1.47; }
+        .dialog-close { border: 0; color: var(--ink); background: rgba(210, 210, 215, 0.9); }
+        .image-dialog { background: rgba(0, 0, 0, 0.94); }
+        .image-dialog::backdrop { background: rgba(0, 0, 0, 0.72); }
+        .btn { border-radius: 9999px; font-size: 1rem; }
+        .btn-outline-dark { border-color: #0066cc; color: #0066cc; }
+        .btn-outline-dark:hover { border-color: #0066cc; color: #fff; background: #0066cc; }
+        a { color: #0066cc; }
+        .contact-note { margin-top: 3rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: 18px; background: #fff; text-align: center; }
+        .contact-note p { margin: 0; }
+        .contact-note a { font-weight: 600; overflow-wrap: anywhere; }
+
+        .language-switcher { display: flex; width: 7rem; }
+        .language-button { flex: 0 0 50%; width: 50%; min-width: 0; padding-right: 0; padding-left: 0; }
+        .summary-panel .btn { display: block; width: fit-content; margin-right: auto; margin-left: auto; }
+        .footer-note { margin-top: 0.75rem; }
+
+        @media (max-width: 575.98px) {
+            .points-list { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.25rem; overflow: visible; }
+            .points-list li { min-width: 0; padding: 0.55rem 0.15rem; }
+            .points-list strong { font-size: 1.25rem; }
+            .points-list span { font-size: 0.75rem; }
+        }
+    </style>
+</head>
+<body data-language="ja">
+    <header class="site-header">
+        <div class="site-nav py-3"><div class="container"><div><span id="club-nav"></span><span id="event-nav" class="ms-2 text-white-50"></span></div><div class="language-switcher" aria-label="Language selector"><button class="language-button active" type="button" data-language="ja" aria-label="Japanese">JP</button><button class="language-button" type="button" data-language="en" aria-label="English">EN</button></div></div></div>
+        <div class="container event-hero">
+            <div class="row align-items-end g-4">
+                <div class="col-lg-9">
+                    <div class="eyebrow"><span class="lang-ja">投票結果発表</span><span class="lang-en">Voting results announcement</span></div>
+                    <h1 class="event-title" id="event-title"></h1>
+                    <p class="event-subtitle mb-0" id="event-subtitle"></p>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main>
+    <div class="container" id="results-content" aria-live="polite"></div>
+
+    </main>
+    <dialog class="image-dialog" aria-label="拡大写真">
+        <button class="dialog-close" type="button" aria-label="Close enlarged photo">&times;</button>
+        <img src="" alt="">
+    </dialog>
+    <script>
+        const imageDialog = document.querySelector('.image-dialog');
+        const dialogImage = imageDialog.querySelector('img');
+        const closeDialog = () => imageDialog.close();
+
+        const localize = (ja, en) => `<span class="lang-ja">${ja}</span><span class="lang-en">${en}</span>`;
+        const place = (rank) => localize(`${rank}位`, `${rank}${rank === 1 ? 'st' : rank === 2 ? 'nd' : rank === 3 ? 'rd' : 'th'} Place`);
+
+        const activateExpandableImages = () => {
+            document.querySelectorAll('.winner-image img, .gallery-image img').forEach((image) => {
+                image.classList.add('zoomable-image');
+                image.tabIndex = 0;
+                image.setAttribute('role', 'button');
+                image.setAttribute('aria-label', `${image.alt}: expand photo`);
+                const openDialog = () => {
+                    dialogImage.src = image.currentSrc || image.src;
+                    dialogImage.alt = image.alt;
+                    imageDialog.showModal();
+                };
+                image.addEventListener('click', openDialog);
+                image.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        openDialog();
+                    }
+                });
+            });
+        };
+
+        const renderEntry = (entry, featured) => {
+            const image = `<img src="${entry.image}" alt="${entry.name.en}">`;
+            const score = localize(`${entry.votes}票 / ${entry.points}点`, `${entry.votes} VOTES / ${entry.points} POINTS`);
+            if (featured) {
+                return `<article class="winner-card"><div class="winner-info"><div class="rank-number">${place(entry.rank)}</div><h3 class="winner-name">${localize(entry.name.ja, entry.name.en)}</h3><div class="score">${score}</div></div><div class="winner-image">${image}</div></article>`;
+            }
+            return `<div class="col"><article class="gallery-card"><div class="gallery-image">${image}</div><div class="gallery-copy"><div class="rank-tag">${place(entry.rank)}</div><h3>${localize(entry.name.ja, entry.name.en)}</h3><small>${score}</small></div></article></div>`;
+        };
+
+        const renderFromData = (data) => {
+            const { event, entries, galleryGroups } = data;
+            const [clubJa, clubEn] = [event.clubName.ja, event.clubName.en];
+            document.title = `${clubJa} ${event.eventName.ja} 写真投票結果発表 / Voting Results Announcement`;
+            document.querySelector('#club-nav').textContent = clubJa;
+            document.querySelector('#event-nav').textContent = event.eventName.en.toUpperCase();
+            document.querySelector('#event-title').innerHTML = localize(`${clubJa}<br>${event.eventName.ja}`, `${clubEn}<br>${event.eventName.en}`);
+            document.querySelector('#event-subtitle').innerHTML = localize(`${event.date.ja}に開催した${clubJa} ${event.eventName.ja}の投票結果です。`, `Here are the results of the ${clubEn} ${event.eventName.en}, held on ${event.date.en}.`);
+
+            const content = document.querySelector('main > .container');
+            const pointItems = event.pointSystem.map((item) => `<li><strong>${item.points}</strong><span>${localize(`${item.rank}位`, `${item.rank}${item.rank === 1 ? 'st' : item.rank === 2 ? 'nd' : item.rank === 3 ? 'rd' : 'th'}`)}</span></li>`).join('');
+            const winners = entries.filter((entry) => entry.rank <= 3).map((entry) => renderEntry(entry, true)).join('');
+            const galleries = galleryGroups.map((group) => {
+                const groupEntries = entries.filter((entry) => group.ranks.includes(entry.rank));
+                const rankLabel = group.ranks.length === 1 ? place(group.ranks[0]) : localize(`${group.ranks[0]}位〜${group.ranks.at(-1)}位`, `${group.ranks[0]}th–${group.ranks.at(-1)}th Place`);
+                const points = [...new Set(groupEntries.map((entry) => entry.points))];
+                const pointLabel = points.length === 1 ? localize(`${groupEntries.length}作品・${points[0]}点`, `${groupEntries.length} works · ${points[0]} points`) : localize(`${Math.max(...points)}点〜${Math.min(...points)}点`, `${Math.max(...points)}–${Math.min(...points)} points`);
+                const gallery = `<section class="gallery-section"><div class="section-heading"><div><div class="section-kicker">${localize(group.kicker.ja, group.kicker.en)}</div><h2>${rankLabel}</h2></div><div class="text-secondary small">${pointLabel}</div></div><div class="ranking-row-items">${groupEntries.map((entry) => renderEntry(entry, false)).join('')}</div></section>`;
+                return gallery;
+            }).join('');
+
+            content.innerHTML = `<section class="summary-panel overflow-hidden"><div class="row g-0 align-items-stretch"><div class="col-lg-6 p-4 p-lg-5"><div class="eyebrow mb-2">${localize('集計方法', 'How we counted')}</div><p class="summary-copy mb-0">${localize('各写真の得票数に基づいて上位5位までにポイントを付与し、最終順位を決定しました。', 'Points were awarded to the five highest-voted photos to determine the final ranking.')}</p><ol class="points-list">${pointItems}</ol><a class="btn btn-outline-dark btn-sm px-3" href="${event.galleryUrl}" target="_blank" rel="noopener noreferrer">${localize('投票対象の全作品を見る', 'View all submitted photos')}</a></div><div class="col-6 col-lg-3"><div class="stat-box"><span class="stat-value">${event.voters}</span><span class="stat-label">${localize('投票者数', 'VOTERS')}</span></div></div><div class="col-6 col-lg-3"><div class="stat-box"><span class="stat-value">${event.totalVotes}</span><span class="stat-label">${localize('総投票数', 'TOTAL VOTES')}</span></div></div></div></section><div class="section-heading"><div><div class="section-kicker">${localize('皆さんが選んだ作品', 'Selected by everyone')}</div><h2>${localize('投票結果', 'Voting Results')}</h2></div><div class="text-secondary small">${localize('最終順位', 'Final ranking')}</div></div>${winners}${galleries}<aside class="contact-note"><p class="lang-ja">ご自身の写真の得票数を知りたい場合は、<a href="mailto:${event.contactEmail}">${event.contactEmail}</a> までご連絡ください。</p><p class="lang-en">To find out how many votes your photo received, please contact <a href="mailto:${event.contactEmail}">${event.contactEmail}</a>.</p></aside><footer class="footer-note"><p class="lang-ja">次回の PhotoWalk でも、また新しい視点に出会えますように。</p><p class="lang-en">See you at the next PhotoWalk.</p></footer>`;
+
+            document.querySelectorAll('.ranking-row-items').forEach((row) => {
+                row.className = 'ranking-row';
+                row.style.setProperty('--item-count', row.children.length);
+            });
+            activateExpandableImages();
+        };
+
+        document.querySelectorAll('.language-button').forEach((button) => {
+            button.addEventListener('click', () => {
+                const language = button.dataset.language;
+                document.body.dataset.language = language;
+                document.documentElement.lang = language;
+                document.querySelectorAll('.language-button').forEach((item) => item.classList.toggle('active', item === button));
+            });
+        });
+
+        fetch('event-data.json')
+            .then((response) => {
+                if (!response.ok) throw new Error(`Could not load event-data.json: ${response.status}`);
+                return response.json();
+            })
+            .then(renderFromData)
+            .catch(() => {
+                document.querySelector('#results-content').innerHTML = '<p class="text-center">イベントデータを読み込めませんでした。</p>';
+            });
+
+        imageDialog.querySelector('.dialog-close').addEventListener('click', closeDialog);
+        imageDialog.addEventListener('click', (event) => {
+            if (event.target === imageDialog) closeDialog();
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+</body>
