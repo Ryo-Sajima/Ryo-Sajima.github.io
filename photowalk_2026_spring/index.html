@@ -421,7 +421,24 @@
         imageDialog.querySelector('.dialog-close').addEventListener('click', closeDialog);
         imageDialog.addEventListener('close', unlockPageScroll);
         imageDialog.addEventListener('click', (event) => {
-            if (event.target === imageDialog) closeDialog();
+            if (event.target === imageDialog) {
+                closeDialog();
+                return;
+            }
+
+            if (event.target !== dialogImage) return;
+
+            const imageBounds = dialogImage.getBoundingClientRect();
+            const imageRatio = dialogImage.naturalWidth / dialogImage.naturalHeight;
+            const boundsRatio = imageBounds.width / imageBounds.height;
+            const renderedWidth = boundsRatio > imageRatio ? imageBounds.height * imageRatio : imageBounds.width;
+            const renderedHeight = boundsRatio > imageRatio ? imageBounds.height : imageBounds.width / imageRatio;
+            const renderedLeft = imageBounds.left + (imageBounds.width - renderedWidth) / 2;
+            const renderedTop = imageBounds.top + (imageBounds.height - renderedHeight) / 2;
+            const isPhotoClick = event.clientX >= renderedLeft && event.clientX <= renderedLeft + renderedWidth
+                && event.clientY >= renderedTop && event.clientY <= renderedTop + renderedHeight;
+
+            if (!isPhotoClick) closeDialog();
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
