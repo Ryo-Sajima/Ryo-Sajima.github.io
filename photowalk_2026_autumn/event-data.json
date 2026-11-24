@@ -1,0 +1,26 @@
+{
+  "event": {
+    "clubName": {
+      "ja": "C社 下丸子写真部",
+      "en": "\"C\" Company Shimomaruko Photography Club"
+    },
+    "eventName": {
+      "ja": "2026秋 PhotoWalk",
+      "en": "2026 Autumn PhotoWalk"
+    },
+    "date": {
+      "ja": "12月13日",
+      "en": "December 13"
+    },
+    "contactEmail": "roy_chicago2007@yahoo.co.jp",
+    "pointSystem": [
+      { "rank": 1, "points": 5 },
+      { "rank": 2, "points": 4 },
+      { "rank": 3, "points": 3 },
+      { "rank": 4, "points": 2 },
+      { "rank": 5, "points": 1 }
+    ]
+  },
+  "entries": [],
+  "galleryGroups": []
+}
